@@ -3,12 +3,18 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+
+// Predefined list of words for the exercise
+
 const SAMPLE_WORDS = ["HELLO", "WORLD", "REACT"] as const;
 
 type Slot = {
   id: string;
   letter: string | null;
 };
+
+
+// Fisher-Yates shuffle algorithm to randomize array elements
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -22,6 +28,8 @@ function shuffle<T>(arr: T[]): T[] {
 export default function WordArrangementPage() {
   const [wordIndex, setWordIndex] = useState(0);
   const targetWord = SAMPLE_WORDS[wordIndex];
+
+  // Memoized array of letters from the current target word
 
   const letters = useMemo(() => targetWord.split(""), [targetWord]);
   const [slots, setSlots] = useState<Slot[]>(() =>
@@ -56,6 +64,8 @@ export default function WordArrangementPage() {
     );
   }
 
+  // Handle dropping a letter into a slot
+
   function onDropToSlot(e: React.DragEvent<HTMLDivElement>, slotIdx: number) {
     e.preventDefault();
     const payload = e.dataTransfer.getData("text/plain");
@@ -86,6 +96,8 @@ export default function WordArrangementPage() {
     }
     setResult("");
   }
+  
+  // Handle dropping a letter back to the bank
 
   function onDropBackToBank(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
@@ -115,6 +127,8 @@ export default function WordArrangementPage() {
   function allowDrop(e: React.DragEvent) {
     e.preventDefault();
   }
+  
+  // Check if the arranged word matches the target
 
   function verify() {
     const assembled = slots.map((s) => s.letter ?? "").join("");

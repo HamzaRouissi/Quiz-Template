@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+// Each pair represents a correct mapping between a left label and a right label.
+
 type Pair = { left: string; right: string };
 
+
+// Sample dataset for the matching exercise. 
 const PAIRS: Pair[] = [
   { left: "Apple", right: "Fruit" },
   { left: "Car", right: "Vehicle" },
@@ -17,6 +21,8 @@ type Connection = { leftIdx: number; rightIdx: number };
 export default function MatchingPage() {
   const QUESTION = "Match each item on the left with its correct category.";
   const leftItems = useMemo(() => PAIRS.map((p) => p.left), []);
+  
+  //  // Right column labels are shuffled to randomize ordering
   const rightItems = useMemo(() => shuffle(PAIRS.map((p) => p.right)), []);
 
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
@@ -29,6 +35,8 @@ export default function MatchingPage() {
 
   const connectionLines = useConnectionLines(leftRefs, rightRefs, connections);
 
+  // manage clicking on left items (select/deselect)
+
   function onLeftClick(idx: number) {
     setSelectedLeft((prev) => (prev === idx ? null : idx));
     setResult("");
@@ -37,7 +45,7 @@ export default function MatchingPage() {
   function onRightClick(idx: number) {
     if (selectedLeft === null) return;
     const exists = connections.find((c) => c.leftIdx === selectedLeft || c.rightIdx === idx);
-    if (exists) return; // prevent multiple connections per side
+    if (exists) return; // prevent multiple connections per side (one to one))
     setConnections((prev) => [...prev, { leftIdx: selectedLeft, rightIdx: idx }]);
     setSelectedLeft(null);
     setResult("");
@@ -49,6 +57,8 @@ export default function MatchingPage() {
     setResult("");
   }
 
+    // Verify if all connections are correct
+
   function verify() {
     if (connections.length !== PAIRS.length) {
       setResult("error");
@@ -56,14 +66,22 @@ export default function MatchingPage() {
     }
     const rightToIdx = new Map<string, number>();
     rightItems.forEach((r, i) => rightToIdx.set(r, i));
+
+        // Check each connection against the correct pairs
+
     const correct = connections.every((c) => {
       const leftLabel = leftItems[c.leftIdx];
+
+      // find expected right label for this left
+
       const expectedRight = PAIRS.find((p) => p.left === leftLabel)!.right;
       const actualRightIdx = c.rightIdx;
       return rightItems[actualRightIdx] === expectedRight;
     });
     setResult(correct ? "correct" : "error");
   }
+ 
+    // Remove a specific connection object
 
   function removeConnection(c: Connection) {
     setConnections((prev) => prev.filter((x) => !(x.leftIdx === c.leftIdx && x.rightIdx === c.rightIdx)));
@@ -201,6 +219,9 @@ function useConnectionLines(
     setLines(newLines);
   }, [connections, leftRefs, rightRefs]);
 
+
+    // Recalculate lines when connections change or window resizes/scrolling
+
   useEffect(() => {
     compute();
     const onResize = () => compute();
@@ -214,6 +235,7 @@ function useConnectionLines(
 
   return lines;
 }
+// Fisher-Yates shuffle algorithm
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
