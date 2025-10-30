@@ -76,7 +76,7 @@ export default function MatchingPage() {
         <Link href="/" className="px-3 py-1.5 rounded-md border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 transition text-sm">
           ← Back
         </Link>
-        <h1 className="text-lg sm:text-xl font-medium">Matching (connect)</h1>
+        <h1 className="text-lg sm:text-xl font-medium">Matching the correct answer</h1>
         <div className="ml-auto flex items-center gap-2">
           <button onClick={reset} className="px-3 py-1.5 rounded-md bg-black text-white dark:bg-white dark:text-black text-sm">
             Clear
